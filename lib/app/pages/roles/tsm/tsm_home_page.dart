@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_Liquidation_screen.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_alert_screen.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_reports_screen.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_team_page.dart';
 import '../../../utils/colors.dart';
 import '../../../utils/gradient_appbar.dart';
 import 'tsm_dashboard.dart';
@@ -13,12 +17,13 @@ class TSMHomePage extends StatefulWidget {
 class _TSMHomePageState extends State<TSMHomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _tabs = const [
+  final List<Widget> _tabs = [
     TSMHomeDashboard(),
-    Center(child: Text('Team Page')),
-    Center(child: Text('Alerts Page')),
-    Center(child: Text('Reports Page')),
-    Center(child: Text('Settings Page')),
+    TsmTeamPage(),
+    TsmLiquidationScreen(),
+    TsmAlertScreen(),
+    TsmReportsScreen(),
+
   ];
 
   @override
@@ -43,8 +48,8 @@ class _TSMHomePageState extends State<TSMHomePage> {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.groups_outlined),
-            selectedIcon: Icon(Icons.groups),
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
             label: 'Dashboard',
           ),
           NavigationDestination(
@@ -53,20 +58,21 @@ class _TSMHomePageState extends State<TSMHomePage> {
             label: 'Team',
           ),
           NavigationDestination(
+            icon: Icon(Icons.inventory_outlined),
+            selectedIcon: Icon(Icons.inventory),
+            label: 'Liquidation',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.notifications_outlined),
             selectedIcon: Icon(Icons.notifications),
             label: 'Alerts',
           ),
           NavigationDestination(
-            icon: Icon(Icons.file_copy_outlined),
-            selectedIcon: Icon(Icons.file_copy),
+            icon: Icon(Icons.bar_chart_outlined),
+            selectedIcon: Icon(Icons.bar_chart),
             label: 'Reports',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
+
         ],
       ),
     );
