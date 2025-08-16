@@ -6,6 +6,9 @@ import '../controllers/auth_controller.dart';
 import '../controllers/data_controller.dart';
 import '../controllers/liquidation_controller.dart';
 import '../controllers/mdo_schedule_controller.dart';
+import '../controllers/tsm_alerts_controller.dart';
+import '../controllers/tsm_liquidation_controller.dart';
+import '../controllers/tsm_team_controller.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -17,5 +20,8 @@ class InitialBinding extends Bindings {
     Get.lazyPut(() => ReportsController());
     Get.lazyPut(() => LiquidationController());
     Get.lazyPut(() => TsmDashboardController());
+    Get.lazyPut(() => TsmAlertsController());
+    Get.lazyPut(() => TsmLiquidationController());
+    Get.lazyPut(() => TsmTeamController());
   }
 }
