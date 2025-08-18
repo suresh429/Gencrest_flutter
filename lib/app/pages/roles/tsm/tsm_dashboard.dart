@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gencrest/app/controllers/tsm_bottom_nav_controller.dart';
 import 'package:get/get.dart';
 import '../../../controllers/tsm_dashboard_controller.dart';
 import '../../../utils/colors.dart';
@@ -205,7 +206,7 @@ class TSMHomeDashboard extends StatelessWidget {
                           InkWell(
                             onTap: () {
                               // Handle view all action
-                              Get.toNamed('/tsm/team');
+                              Get.find<TsmBottomNavController>().changeTab(1); // Switch to Team tab
                             },
                             child: const Text(
                               "View All",

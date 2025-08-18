@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gencrest/app/controllers/mdo_bottom_nav_controller.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../../utils/colors.dart';
 
@@ -104,101 +107,116 @@ class MDOHomeDashboard extends StatelessWidget {
                 ),
                 elevation: 1,
                 color: Colors.white,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        AppColors.bottomNavColor, // Pink strip color
-                        AppColors.bottomNavColor, // Keep same for solid strip
-                        Colors.white, // Transition to card background
-                      ],
-                      stops: [0.01, 0.003, 0.01], // controls strip thickness
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12.withOpacity(0.05),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title Row
-                        Row(
-                          children: const [
-                            Icon(
-                              Icons.location_on_outlined,
-                              color: Color(0xFFdb2778),
-                              size: 20,
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              "Ongoing Visit",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Inner pink section
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.bottomNavColor.withOpacity(0.09),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Ongoing Visit Header
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header Row (Icon + Title + View All)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Left pink bar inside inner section
+                                Row(
+                                  children: const [
+                                    Icon(Icons.calendar_today, size: 18, color: Color(0xFF7B2FF7)),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      "Next Visit",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    // View All action
+                                    Get.find<MdoBottomNavController>().changeTab(1); // Switch to Team tab
+                                  },
+                                  child: const Text(
+                                    "View All",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF7B2FF7),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Inner Card
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF7B2FF7).withOpacity(0.08), // light purple
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Left vertical purple bar
                                 Container(
                                   width: 6,
-                                  height: 25,
+                                  height: 60,
                                   decoration: BoxDecoration(
-                                    color: AppColors.bottomNavColor,
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: const Color(0xFF7B2FF7),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
 
-                                // Visit info
+                                // Visit Details
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: const [
                                       Text(
-                                        "Visit Green Valley Farm",
+                                        "Ram Kumar Farm",
                                         style: TextStyle(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w700,
                                           color: Colors.black87,
                                         ),
                                       ),
+                                      SizedBox(height: 4),
                                       Row(
                                         children: [
-                                          Icon(
-                                            Icons.person,
-                                            size: 16,
-                                            color: Colors.grey,
-                                          ),
+                                          Icon(Icons.access_time,
+                                              size: 16, color: Colors.black54),
                                           SizedBox(width: 4),
                                           Text(
-                                            "Ram Kumar",
+                                            "11:00 AM",
                                             style: TextStyle(
                                               fontSize: 14,
-                                              color: Colors.grey,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.location_on,
+                                              size: 16, color: Colors.black54),
+                                          SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              "Green Valley, Sector 12",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54,
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -207,43 +225,34 @@ class MDOHomeDashboard extends StatelessWidget {
                                   ),
                                 ),
 
-                                const SizedBox(width: 10),
-                                // Resume Button
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 12),
-                                  child: SizedBox(
-                                    height: 32, // reduced height
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            AppColors.bottomNavColor,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text(
-                                        "Resume",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
+                                // Start Button
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFF7B2FF7),
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                ),
+                                  onPressed: () {
+                                    // Start action
+                                  },
+                                  child: const Text(
+                                    "Start",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      )
+
+                    ],
                   ),
                 ),
               ),
