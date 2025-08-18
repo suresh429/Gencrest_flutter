@@ -29,10 +29,10 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       title: Row(
         children: [
-           CircleAvatar(
+          CircleAvatar(
             radius: 18,
             backgroundColor: Colors.grey.withValues(alpha: 0.3),
-            child: Icon(Icons.person, color: Colors.white),
+            child: const Icon(Icons.person, color: Colors.white),
           ),
           const SizedBox(width: 12),
           Column(
@@ -41,7 +41,10 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
               Text(
                 name,
                 style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               Text(
                 location,
@@ -50,14 +53,20 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
           const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: onNotificationTap,
-          ),
-          // IconButton(
-          //   icon: const Icon(Icons.menu, color: Colors.white),
-          //   onPressed: onMenuTap,
-          // ),
+
+          // ✅ Show notification only if onNotificationTap is not null
+          if (onNotificationTap != null)
+            IconButton(
+              icon: const Icon(Icons.notifications, color: Colors.white),
+              onPressed: onNotificationTap,
+            ),
+
+          // ✅ Optional menu button
+          if (onMenuTap != null)
+            IconButton(
+              icon: const Icon(Icons.menu, color: Colors.white),
+              onPressed: onMenuTap,
+            ),
         ],
       ),
     );

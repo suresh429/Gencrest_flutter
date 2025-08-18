@@ -41,6 +41,7 @@ dependencies:
   path_provider:
   dio:
   connectivity_plus:
+  dropdown_button2: ^2.3.9
 
 
 dev_dependencies:

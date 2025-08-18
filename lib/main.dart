@@ -6,6 +6,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:get/get.dart';
 import 'app/bindings/initial_binding.dart';
 import 'app/pages/login_page.dart';
+import 'app/routes/app_pages.dart';
 import 'app/utils/colors.dart';
 import 'app/utils/offline_sync_manager.dart';
 
