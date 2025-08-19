@@ -9,7 +9,7 @@ import 'mdo_liquidation_screen.dart';
 import 'mdo_dashboard.dart';
 
 import '../../../utils/colors.dart';
-import '../../../utils/gradient_appbar.dart';
+import '../../../utils/gradient_home_appbar.dart';
 
 class MDOHomePage extends StatelessWidget {
   MDOHomePage({super.key});
@@ -27,7 +27,7 @@ class MDOHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GradientAppBar(
+      appBar: GradientHomeAppBar(
         name: "Rajesh Kumar",
         location: "MDO • Delhi North",
         onNotificationTap: () {

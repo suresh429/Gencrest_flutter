@@ -3,13 +3,14 @@ import 'package:gencrest/app/controllers/tsm_bottom_nav_controller.dart';
 import 'package:gencrest/app/pages/roles/tsm/tsm_Liquidation_screen.dart';
 import 'package:gencrest/app/pages/roles/tsm/tsm_alert_screen.dart';
 import 'package:gencrest/app/pages/roles/tsm/tsm_dashboard.dart';
-import 'package:gencrest/app/pages/roles/tsm/tsm_reports_screen.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_more_screen.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_orders_screen.dart';
 import 'package:gencrest/app/pages/roles/tsm/tsm_team_page.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../../utils/colors.dart';
-import '../../../utils/gradient_appbar.dart';
+import '../../../utils/gradient_home_appbar.dart';
 
 class TSMHomePage extends StatelessWidget {
   final TsmBottomNavController controller = Get.put(TsmBottomNavController());
@@ -17,15 +18,15 @@ class TSMHomePage extends StatelessWidget {
   final List<Widget> _tabs = [
     TSMHomeDashboard(),
     TsmTeamPage(),
+    TsmOrdersScreen(),
     TsmLiquidationScreen(),
-    TsmAlertScreen(),
-    TsmReportsScreen(),
+    TsmMoreScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Obx(() => Scaffold(
-      appBar: GradientAppBar(
+      appBar: GradientHomeAppBar(
         name: "S.varma",
         location: "TSM • Delhi North",
         onNotificationTap: () {
@@ -50,17 +51,17 @@ class TSMHomePage extends StatelessWidget {
               selectedIcon: Icon(Icons.people_alt),
               label: 'Team'),
           NavigationDestination(
+              icon: Icon(Icons.shopping_bag_outlined),
+              selectedIcon: Icon(Icons.shopping_bag),
+              label: 'Orders'),
+          NavigationDestination(
               icon: Icon(Icons.inventory_outlined),
               selectedIcon: Icon(Icons.inventory),
               label: 'Liquidation'),
           NavigationDestination(
-              icon: Icon(Icons.notifications_outlined),
-              selectedIcon: Icon(Icons.notifications),
-              label: 'Alerts'),
-          NavigationDestination(
-              icon: Icon(Icons.bar_chart_outlined),
-              selectedIcon: Icon(Icons.bar_chart),
-              label: 'Reports'),
+              icon: Icon(Icons.more_vert),
+              selectedIcon: Icon(Icons.more_vert),
+              label: 'More'),
         ],
       ),
     ));
