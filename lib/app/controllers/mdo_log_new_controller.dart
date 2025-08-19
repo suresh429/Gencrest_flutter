@@ -11,6 +11,9 @@ class MdoLogController extends GetxController {
   final quantityController = TextEditingController();
   final dateController = TextEditingController();
 
+  var isDistributorReadOnly = false.obs;
+
+
   // Dropdown data
   final retailers = ["Kumar Seeds", "Green Valley Store", "Farmer Point"];
   final products = ["Cotton Hybrid-101", "Corn Super-202", "Wheat Gold-303"];
@@ -26,6 +29,21 @@ class MdoLogController extends GetxController {
 
   void setDate(DateTime date) {
     dateController.text = "${date.month}/${date.day}/${date.year}";
+  }
+
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    // ✅ Get distributor argument
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args != null && args["distributor"] != null) {
+      distributorController.text = args["distributor"];
+      isDistributorReadOnly.value = true; // Make readonly
+    } else {
+      isDistributorReadOnly.value = false; // Editable
+    }
   }
 
   void submitLog() {

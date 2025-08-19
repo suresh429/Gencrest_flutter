@@ -1,35 +1,66 @@
 import 'package:get/get.dart';
 
-class TsmTeamController extends GetxController {
-  final tabs = ["All", "Active", "On Visit", "Issues"].obs;
-  final selectedTab = 0.obs;
+import '../data/models/team_member.dart';
 
-  void selectTab(int index) {
-    selectedTab.value = index; // this updates reactive state
+class TsmTeamController extends GetxController {
+  final mainTabs = ["Team Status", "Performance"].obs;
+  final tabs = ["All", "Active", "On Visit", "Issues"].obs;
+  final subTabs = ["Overall", "Zone Wise", "TSM Wise","MDo Wise"].obs;
+
+  final mainSelectedTab = 0.obs;
+  final selectedTab = 0.obs;
+  var subSelectedTab = 0.obs;
+
+  void mainSelectTab(int index) {
+    mainSelectedTab.value = index;
   }
 
-  // Team Members List
-  final teamList = <Map<String, dynamic>>[
-    {
-      "name": "Rajesh Kumar",
-      "farm": "Ram Kumar Farm",
-      "status": "on visit",
-      "battery": 85,
-      "lastSeen": "2 mins ago",
-    },
-    {
-      "name": "Priya Sharma",
-      "farm": "Sharma Farms",
-      "status": "active",
-      "battery": 72,
-      "lastSeen": "5 mins ago",
-    },
-    {
-      "name": "Amit Verma",
-      "farm": "Verma Agro",
-      "status": "issues",
-      "battery": 60,
-      "lastSeen": "10 mins ago",
-    },
-  ].obs;
+  void selectTab(int index) {
+    selectedTab.value = index;
+  }
+
+  void subSelectTab(int index) {
+    subSelectedTab.value = index;
+  }
+
+  /// 🔹 Team Members List
+  var teamList = <TeamMember>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    teamList.addAll([
+      TeamMember(
+        rank: 1,
+        name: "Rajesh Kumar",
+        status: "On Visit",
+        isActive: true,
+        progress: 85,
+        startTime: "09:00 AM",
+        avatarLetter: "R",
+        location: "Green Valley, Sector 12",
+      ),
+      TeamMember(
+        rank: 2,
+        name: "Priya Sharma",
+        status: "Active",
+        isActive: true,
+        progress: 72,
+        startTime: "09:05 AM",
+        avatarLetter: "P",
+        location: "Market Road, Anand",
+      ),
+      TeamMember(
+        rank: 3,
+        name: "Amit Verma",
+        status: "Issues",
+        isActive: false,
+        progress: 60,
+        startTime: "09:10 AM",
+        avatarLetter: "A",
+        location: "City Center, Vadodara",
+      ),
+    ]);
+  }
 }

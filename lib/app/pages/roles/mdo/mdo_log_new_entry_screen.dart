@@ -10,7 +10,9 @@ class MdoLogNewEntryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final MdoLogController controller = Get.put(MdoLogController());
 
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Log Liquidation"),
         elevation: 0,
@@ -31,9 +33,9 @@ class MdoLogNewEntryScreen extends StatelessWidget {
         child: ListView(
           children: [
             // Distributor TextField
-            TextField(
+            Obx(() => TextField(
               controller: controller.distributorController,
-              readOnly: true,
+              readOnly: controller.isDistributorReadOnly.value,
               decoration: InputDecoration(
                 labelText: "From Distributor",
                 filled: true,
@@ -42,7 +44,7 @@ class MdoLogNewEntryScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-            ),
+            )),
             const SizedBox(height: 16),
 
             // ✅ Retailer Dropdown with fixed popup width

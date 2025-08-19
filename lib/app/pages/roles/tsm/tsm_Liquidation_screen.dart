@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_liquidation_card_details_screen.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_select_distributor_screen.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/tsm_liquidation_controller.dart';
+import 'bulk_verification_page.dart';
 
 class TsmLiquidationScreen extends StatelessWidget {
   final TsmLiquidationController controller = Get.put(
@@ -34,20 +37,25 @@ class TsmLiquidationScreen extends StatelessWidget {
                 ),
                 _circleButton(Icons.filter_list, Colors.blue),
                 const SizedBox(width: 8),
-                _circleButton(Icons.add, Colors.purple),
+                //_circleButton(Icons.add, Colors.purple),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
+            // ---------- ACTIONS ----------
+            _buildActionsCard(),
+
+            const SizedBox(height: 12),
             // ---------- METRIC CARDS ----------
-
             GridView.count(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              crossAxisCount: 2, // 2 cards per row
+              crossAxisCount: 2,
+              // 2 cards per row
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 1.4, // adjust height/width
+              childAspectRatio: 1.4,
+              // adjust height/width
               children: [
                 _buildMetricCard(
                   icon: Icons.inventory_2_outlined,
@@ -81,11 +89,11 @@ class TsmLiquidationScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // ---------- PERFORMANCE CARD ----------
             _buildPerformanceCard(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
 
             // ---------- FILTER TABS ----------
             SizedBox(
@@ -102,12 +110,17 @@ class TsmLiquidationScreen extends StatelessWidget {
                     return GestureDetector(
                       onTap: () => controller.selectTab(index),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                         decoration: BoxDecoration(
                           color: isSelected ? Colors.purple : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isSelected ? Colors.transparent : Colors.grey.shade300,
+                            color: isSelected
+                                ? Colors.transparent
+                                : Colors.grey.shade300,
                           ),
                         ),
                         child: Text(
@@ -124,11 +137,11 @@ class TsmLiquidationScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // ---------- MDO LIST (Dynamic & Filtered) ----------
             Obx(
-                  () => ListView.separated(
+              () => ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.filteredList.length,
@@ -139,14 +152,16 @@ class TsmLiquidationScreen extends StatelessWidget {
                 },
               ),
             ),
-
-
-            const SizedBox(height: 12),
-
-            // ---------- ACTIONS ----------
-            _buildActionsCard(),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO: handle tap
+          Get.to(() => TsmSelectDistributorScreen());
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -189,7 +204,10 @@ class TsmLiquidationScreen extends StatelessWidget {
             children: [
               Icon(icon, color: iconColor, size: 22),
               const SizedBox(width: 8),
-              Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+              Text(
+                title,
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              ),
             ],
           ),
 
@@ -282,10 +300,7 @@ class TsmLiquidationScreen extends StatelessWidget {
         children: [
           Text(
             mdo["name"],
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 2),
           Text(
@@ -308,10 +323,7 @@ class TsmLiquidationScreen extends StatelessWidget {
               ),
               child: Text(
                 "${mdo["pendingVerification"]} pending verification",
-                style: const TextStyle(
-                  color: Colors.brown,
-                  fontSize: 13,
-                ),
+                style: const TextStyle(color: Colors.brown, fontSize: 13),
               ),
             ),
           const SizedBox(height: 12),
@@ -320,7 +332,11 @@ class TsmLiquidationScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildStat("${mdo["assigned"]}", "kgs assigned", Colors.blue),
-              _buildStat("${mdo["toRetailers"]}", "to retailers", Colors.purple),
+              _buildStat(
+                "${mdo["toRetailers"]}",
+                "to retailers",
+                Colors.purple,
+              ),
               _buildStat("${mdo["toFarmers"]}", "to farmers", Colors.green),
               _buildStat("${mdo["pending"]}", "pending", Colors.orange),
             ],
@@ -330,16 +346,21 @@ class TsmLiquidationScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    "View & Verify",
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                child: InkWell(
+                  onTap: (){
+                    Get.to(TsmLiquidationCardDetailsScreen());
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      "View & Verify",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
               ),
@@ -387,9 +408,7 @@ class TsmLiquidationScreen extends StatelessWidget {
 
   Widget _buildActionsCard() {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 1,
       color: Colors.white,
       child: Padding(
@@ -397,65 +416,83 @@ class TsmLiquidationScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "TSM Actions",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
-              ),
+            Row(
+              children: [
+                Icon(Icons.list_alt_outlined, color: Color(0xFFE11D48)),
+                const SizedBox(width: 8),
+                const Text(
+                  "TSM Direct Actions",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF1F4),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Color(0xFFFFB3C0)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.add, color: Color(0xFFE11D48)),
-                        SizedBox(width: 8),
-                        Text(
-                          "Log Entry\n(Field Visit)",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: Color(0xFFE11D48),
+                  child: InkWell(
+                    onTap: (){
+                      Get.to(() => TsmSelectDistributorScreen());
+                    },
+                    child: Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF1F4),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Color(0xFFFFB3C0)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.add, color: Color(0xFFE11D48)),
+                          SizedBox(width: 8),
+                          Text(
+                            "Log Direct \nEntry",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Color(0xFFE11D48),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFF5F3FF),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Color(0xFFD6BCFA)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.task_alt_outlined, color: Color(0xFF7C3AED)),
-                        SizedBox(width: 8),
-                        Text(
-                          "Bulk \nVerification",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: Color(0xFF7C3AED),
+                  child: InkWell(
+                    onTap: (){
+                      Get.to(BulkVerificationPage());
+                    },
+                    child: Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF5F3FF),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Color(0xFFD6BCFA)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.task_alt_outlined, color: Color(0xFF7C3AED)),
+                          SizedBox(width: 8),
+                          Text(
+                            "Bulk \nVerification",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Color(0xFF7C3AED),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

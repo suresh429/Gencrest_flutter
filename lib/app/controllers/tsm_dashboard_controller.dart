@@ -8,18 +8,24 @@ class TsmDashboardController extends GetxController {
 
   var liveMeetings = <TeamMember>[
     TeamMember(
+      rank: 1,
       name: "Rajesh Kumar",
       status: "Ram Kumar Farm\nGreen Valley, Sector 12",
       isActive: true,
       progress: 25, // meeting duration in mins
       startTime: "10:45 AM",
+      avatarLetter: 'R',
+      location: 'Green Valley, Sector 12',
     ),
     TeamMember(
+      rank: 2,
       name: "Priya Sharma",
       status: "Sunrise Agro Store\nMarket Road, Anand",
       isActive: true,
       progress: 15,
       startTime: "11:20 AM",
+      avatarLetter: 'P',
+      location: 'Market Road, Anand',
     ),
   ].obs;
 }

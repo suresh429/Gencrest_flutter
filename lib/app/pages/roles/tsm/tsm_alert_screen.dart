@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gencrest/app/utils/colors.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-
 import '../../../controllers/tsm_alerts_controller.dart';
 import '../../../data/models/alert_model.dart';
 
@@ -13,6 +11,22 @@ class TsmAlertScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
+      appBar: AppBar(
+        title: const Text("Critical Alerts"),
+        elevation: 0,
+        foregroundColor: Colors.white, // text/icon color
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF9434e7), Color(0xFFdb2778)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+      ),
+
+      // Main content (alerts list)
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -60,93 +74,100 @@ class TsmAlertScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 12),
-
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 1,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Quick Actions",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 1,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // keep it compact
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Quick Actions",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E293B),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFF1F4),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFFFB3C0)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.notifications_outlined, color: Color(0xFFE11D48)),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Send Team\nAlert",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Color(0xFFE11D48),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFF1F4),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: const Color(0xFFFFB3C0)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(Icons.notifications_outlined,
+                                      color: Color(0xFFE11D48)),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    "Send Team\nAlert",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: Color(0xFFE11D48),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF5F3FF),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Color(0xFFD6BCFA)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.chat_outlined, color: Color(0xFF7C3AED)),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Broad cast \nMessage",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Color(0xFF7C3AED),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Container(
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF5F3FF),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Color(0xFFD6BCFA)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(Icons.chat_outlined, color: Color(0xFF7C3AED)),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    "Broadcast\nMessage",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: Color(0xFF7C3AED),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
+
     );
   }
 
+  // Filter tab widget
   Widget _buildFilterTab(String title) {
     return Obx(() {
       bool isActive = controller.selectedFilter.value == title;
@@ -173,7 +194,7 @@ class TsmAlertScreen extends StatelessWidget {
     });
   }
 
-
+  // Alert card widget
   Widget _buildAlertCard(Alert alert) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
