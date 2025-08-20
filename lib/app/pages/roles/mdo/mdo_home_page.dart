@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gencrest/app/pages/roles/mdo/route_planning_bottom_sheet.dart';
 import 'package:get/get.dart';
 
 import 'package:gencrest/app/controllers/mdo_bottom_nav_controller.dart';
@@ -32,8 +33,12 @@ class MDOHomePage extends StatelessWidget {
         location: "MDO • Delhi North",
         onNotificationTap: () {
           // Handle notifications
+         // RoutePlanningBottomSheet.show(context);
         },
-        onMenuTap: null,
+        onMenuTap: () {
+          // Handle notifications
+          RoutePlanningBottomSheet.show(context,isMdo: true);
+        },
       ),
 
       // Body controlled by GetX

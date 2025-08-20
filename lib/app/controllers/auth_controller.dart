@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../pages/home_page.dart';
+import 'package:get/get.dart' hide Response;
+import 'package:dio/dio.dart';
 import '../data/api_service.dart';
 import '../pages/roles/mdo/mdo_home_page.dart';
 import '../pages/roles/rbh/rbh_home_page.dart';
 import '../pages/roles/tsm/tsm_home_page.dart';
-import '../utils/user_local_storage.dart';
 
 class AuthController extends GetxController {
   final formKey = GlobalKey<FormState>();
-
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -22,7 +20,7 @@ class AuthController extends GetxController {
 
   Future<void> login() async {
     if (!formKey.currentState!.validate()) {
-      debugPrint("Form validation failed");
+      debugPrint("❌ Form validation failed");
       return;
     }
 
@@ -32,65 +30,73 @@ class AuthController extends GetxController {
       final username = usernameController.text.trim();
       final password = passwordController.text.trim();
 
-      await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
-      const token = "dummy_token_123456";
+      debugPrint("🔑 Attempting login with username: $username");
+      debugPrint("🔑 Password: $password");
+      debugPrint("🔑 CSRF Token: " + (ApiService.csrfToken ?? "null"));
+      debugPrint("🔑 Headers: " + ApiService.headers.toString());
 
-      ApiService.setToken(token);
-
-      // Ensure UserLocalStorage is initialized
-      await UserLocalStorage().init();
-      // Dummy user data with role
-      final role = username.trim().toLowerCase();
-      final validRoles = ['mdo', 'tsm', 'rbh'];
-      debugPrint("Checking role: $role");
-      if (!validRoles.contains(role)) {
-        Get.snackbar("Login Failed", "Invalid username or password",
-            backgroundColor: Colors.red.shade100, colorText: Colors.black);
-        isLoading.value = false;
-        return;
+      Response response;
+      try {
+        response = await ApiService.login(username, password);
+      } on DioException catch (e) {
+        debugPrint("⚠️ DioException: ${e.response?.data}");
+        if (e.response?.statusCode == 403 &&
+            e.response?.data != null &&
+            e.response?.data['message'] == 'invalid csrf token') {
+          debugPrint("🔄 Retrying login with new CSRF token...");
+          await ApiService.getCsrfToken();
+          response = await ApiService.login(username, password);
+        } else {
+          rethrow;
+        }
       }
-      final userData = {
-        'username': username,
-        'role': role.toUpperCase(),
-      };
-      debugPrint("User data prepared: $userData");
-      await UserLocalStorage().saveUser(userData);
-      await UserLocalStorage().saveRole(userData['role']!);
 
-      usernameController.clear();
-      passwordController.clear();
+      debugPrint("🔑 Login response status: ${response.statusCode}");
+      debugPrint("🔑 Login response data: ${response.data}");
 
-      debugPrint("User role before navigation: ${userData['role']}");
+      if (response.statusCode == 200) {
+        final user = response.data['user'] ?? {};
+        final designation = (user['designation'] ?? '').toString().toUpperCase();
 
-      switch (userData['role']) {
-        case 'MDO':
-          debugPrint("Navigating to MDOHomePage");
-          Get.offAll(() => MDOHomePage());
-          debugPrint("Navigated to MDOHomePage");
-          break;
-        case 'TSM':
-          debugPrint("Navigating to TSMHomePage");
-          Get.offAll(() => TSMHomePage());
-          debugPrint("Navigated to TSMHomePage");
-          break;
-        case 'RBH':
-          debugPrint("Navigating to RBHHomePage");
-          Get.offAll(() => RBHHomePage());
-          debugPrint("Navigated to RBHHomePage");
-          break;
-        default:
-          debugPrint("Unexpected role: ${userData['role']}");
-          Get.snackbar("Login Failed", "Unexpected role assignment",
-              backgroundColor: Colors.red.shade100, colorText: Colors.black);
-          break;
+        usernameController.clear();
+        passwordController.clear();
+
+        // Navigate based on role
+        switch (designation) {
+          case 'MDO':
+            Get.offAll(() => MDOHomePage());
+            break;
+          case 'TSM':
+            Get.offAll(() => TSMHomePage());
+            break;
+          case 'RBH':
+            Get.offAll(() => RBHHomePage());
+            break;
+          case 'SUPER_ADMIN':
+            Get.snackbar("Login Success", "Super Admin logged in",
+                backgroundColor: Colors.green.shade100,
+                colorText: Colors.black);
+            break;
+          default:
+            Get.snackbar("Login Failed", "Unexpected role: $designation",
+                backgroundColor: Colors.red.shade100,
+                colorText: Colors.black);
+        }
+      } else {
+        Get.snackbar("Login Failed", "Invalid username or password",
+            backgroundColor: Colors.red.shade100,
+            colorText: Colors.black);
       }
     } catch (e) {
-      debugPrint("Error during login: $e");
-      Get.snackbar("Login Failed", "Invalid username or password",
-          backgroundColor: Colors.red.shade100, colorText: Colors.black);
+      debugPrint("⚠️ Error during login: $e");
+      if (e is DioException && e.response?.data != null) {
+        debugPrint("⚠️ Error response body: ${e.response?.data}");
+      }
+      Get.snackbar("Login Failed", e.toString(),
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.black);
     } finally {
       isLoading.value = false;
-      debugPrint("Login process completed");
     }
   }
 

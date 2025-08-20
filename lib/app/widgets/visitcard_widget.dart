@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../pages/roles/mdo/mdo_visit_details.dart';
 
 class VisitCard extends StatelessWidget {
   final String title;
@@ -102,7 +106,9 @@ class VisitCard extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(MdoVisitDetailsPage());
+                    },
                     child: const Text(
                       'Start Visit',
                       style: TextStyle(color: Colors.white, fontSize: 16),

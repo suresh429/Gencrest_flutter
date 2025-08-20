@@ -11,6 +11,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 import '../../../utils/colors.dart';
 import '../../../utils/gradient_home_appbar.dart';
+import '../mdo/route_planning_bottom_sheet.dart';
 
 class TSMHomePage extends StatelessWidget {
   final TsmBottomNavController controller = Get.put(TsmBottomNavController());
@@ -32,7 +33,10 @@ class TSMHomePage extends StatelessWidget {
         onNotificationTap: () {
           // Handle notifications
         },
-        onMenuTap: null,
+        onMenuTap: () {
+          // Handle notifications
+          RoutePlanningBottomSheet.show(context);
+        },
       ),
       body: _tabs[controller.selectedIndex.value],
       bottomNavigationBar: NavigationBar(

@@ -17,23 +17,30 @@ class UserLocalStorage {
 
   Map<String, dynamic>? getUser() {
     final data = userBox.get('user');
-    if (data is Map<String, dynamic>) {
-      return data;
-    }
-    return null;
+    return data != null ? Map<String, dynamic>.from(data) : null;
   }
 
   Future<void> saveRole(String role) async {
     await userBox.put('role', role);
   }
 
-  String? getRole() {
-    return userBox.get('role') as String?;
+  String? getRole() => userBox.get('role') as String?;
+
+  Future<void> saveToken(String token, String refreshToken) async {
+    await userBox.put('accessToken', token);
+    await userBox.put('refreshToken', refreshToken);
   }
+
+  String? getToken() => userBox.get('accessToken') as String?;
+  String? getRefreshToken() => userBox.get('refreshToken') as String?;
+
+  Future<void> saveCsrfToken(String csrfToken) async {
+    await userBox.put('csrfToken', csrfToken);
+  }
+
+  String? getCsrfToken() => userBox.get('csrfToken') as String?;
 
   Future<void> clearUser() async {
-    await userBox.delete('user');
-    await userBox.delete('role');
+    await userBox.clear();
   }
 }
-

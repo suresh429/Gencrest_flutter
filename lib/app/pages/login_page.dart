@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gencrest/app/pages/roles/mdo/mdo_home_page.dart';
+import 'package:gencrest/app/pages/roles/tsm/tsm_home_page.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
@@ -67,19 +69,21 @@ class LoginPage extends StatelessWidget {
 
                 const SizedBox(height: 15),
                 Obx(() => ElevatedButton(
-                  onPressed: controller.isLoading.value ? null : controller.login,
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () {
+                   // controller.login(); // <-- call login method
+                    // or navigate after login success
+                     Get.to(() => TSMHomePage());
+                  },
                   child: controller.isLoading.value
                       ? const SizedBox(
-                    width: 20, // Constrain width
-                    height: 20, // Constrain height
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(color: Colors.white),
                   )
                       : const Text("Login"),
                 )),
-
-
 
               ],
             ),

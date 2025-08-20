@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../../utils/colors.dart';
+import 'mdo_visit_details.dart';
 
 class MDOHomeDashboard extends StatelessWidget {
   const MDOHomeDashboard({super.key});
@@ -236,6 +237,7 @@ class MDOHomeDashboard extends StatelessWidget {
                                   ),
                                   onPressed: () {
                                     // Start action
+                                    Get.to(MdoVisitDetailsPage());
                                   },
                                   child: const Text(
                                     "Start",

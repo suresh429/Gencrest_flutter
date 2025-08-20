@@ -42,6 +42,9 @@ dependencies:
   dio:
   connectivity_plus:
   dropdown_button2: ^2.3.9
+  cookie_jar: ^4.0.8
+  dio_cookie_manager: ^3.1.1
+  intl: ^0.19.0
 
 
 dev_dependencies:

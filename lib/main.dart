@@ -5,23 +5,33 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:get/get.dart';
 import 'app/bindings/initial_binding.dart';
+import 'app/data/api_service.dart';
 import 'app/pages/login_page.dart';
 import 'app/routes/app_pages.dart';
 import 'app/utils/colors.dart';
 import 'app/utils/offline_sync_manager.dart';
+import 'app/utils/user_local_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ✅ Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox('offlineBox');
 
+  // ✅ Initialize storage
+  await UserLocalStorage().init();
+
+  // ✅ Initialize API service (loads tokens & csrf if any)
+  await ApiService.init();
+
+  // ✅ Initialize offline sync
   await OfflineSyncManager().init();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black, // Background color
-    statusBarIconBrightness: Brightness.light, // For white icons
-    statusBarBrightness: Brightness.dark, // For iOS
+    statusBarColor: Colors.black,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
   ));
 
   FlutterNativeSplash.preserve(

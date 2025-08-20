@@ -54,6 +54,13 @@ class GradientHomeAppBar extends StatelessWidget implements PreferredSizeWidget 
           ),
           const Spacer(),
 
+          // ✅ Optional menu button
+          if (onMenuTap != null)
+            IconButton(
+              icon: const Icon(Icons.route, color: Colors.white),
+              onPressed: onMenuTap,
+            ),
+
           // ✅ Show notification only if onNotificationTap is not null
           if (onNotificationTap != null)
             IconButton(
@@ -61,12 +68,7 @@ class GradientHomeAppBar extends StatelessWidget implements PreferredSizeWidget 
               onPressed: onNotificationTap,
             ),
 
-          // ✅ Optional menu button
-          if (onMenuTap != null)
-            IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onPressed: onMenuTap,
-            ),
+
         ],
       ),
     );
