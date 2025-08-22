@@ -1,6 +1,7 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter/material.dart';
 import '../utils/user_local_storage.dart';
 
 class ApiService {
@@ -19,15 +20,39 @@ class ApiService {
   static final UserLocalStorage _storage = UserLocalStorage();
   static final CookieJar _cookieJar = CookieJar();
 
-  // 🔒 Hardcoded CSRF token for testing
-  static String? _csrfToken = "i6DMYFsZ-INs1eeplXN6r4gSzos8P0CdHw98";
-
+  static String? _csrfToken;
   static String? _accessToken;
   static String? _refreshToken;
 
   /// Initialize service - add cookie manager & load tokens
   static Future<void> init() async {
     _dio.interceptors.add(CookieManager(_cookieJar));
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (e, handler) async {
+          if (e.response?.statusCode == 403 &&
+              e.response?.data['message'] == 'invalid csrf token') {
+            try {
+              await getCsrfToken();
+              // Retry the original request with new CSRF token
+              final opts = Options(
+                method: e.requestOptions.method,
+                headers: e.requestOptions.headers,
+              );
+              final response = await _dio.request(
+                e.requestOptions.path,
+                options: opts,
+                data: e.requestOptions.data,
+              );
+              return handler.resolve(response);
+            } catch (retryError) {
+              return handler.next(e);
+            }
+          }
+          return handler.next(e);
+        },
+      ),
+    );
 
     _accessToken = _storage.getToken();
     _refreshToken = _storage.getRefreshToken();
@@ -36,53 +61,68 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $_accessToken';
     }
 
-    // ✅ Always set hardcoded CSRF token
-    if (_csrfToken != null) {
-      _dio.options.headers['x-csrf-token'] = _csrfToken;
+    // Get initial CSRF token
+    await getCsrfToken();
+  }
+
+  /// Get CSRF token from server
+  static Future<String> getCsrfToken() async {
+    try {
+      final response = await _dio.get('auth/csrf');
+      _csrfToken = response.data['csrfToken'];
+      if (_csrfToken != null) {
+        _dio.options.headers['x-csrf-token'] = _csrfToken;
+      }
+      return _csrfToken!;
+    } catch (e) {
+      debugPrint('Error getting CSRF token: $e');
+      rethrow;
     }
   }
 
-  /// Skip fetching CSRF from server (use hardcoded one)
-  static Future<String> getCsrfToken() async {
-    print("⚠️ Using hardcoded CSRF token: $_csrfToken");
-    _dio.options.headers['x-csrf-token'] = _csrfToken;
-    return _csrfToken!;
-  }
-
-  /// Login with CSRF token
+  /// Login with credentials
   static Future<Response> login(String identifier, String password) async {
-    // if (_csrfToken == null) {
-    //   await getCsrfToken();
-    // }
+    if (_csrfToken == null) {
+      await getCsrfToken();
+    }
 
-    final response = await _dio.post(
-      "auth/login/password",
-      data: {"identifier": identifier, "password": password},
-      options: Options(headers: {
-        "x-csrf-token": "i6DMYFsZ-INs1eeplXN6r4gSzos8P0CdHw98",
-        "Accept": "application/json",
-      }),
-    );
+    try {
+      final response = await _dio.post(
+        "auth/login/password",
+        data: {"identifier": identifier, "password": password},
+        options: Options(
+          headers: {
+            'x-csrf-token': _csrfToken,
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      _accessToken = response.data['access_token'];
-      _refreshToken = response.data['refresh_token'];
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _accessToken = response.data['access_token'];
+        _refreshToken = response.data['refresh_token'];
 
-      if (_accessToken != null) {
-        await _storage.saveToken(_accessToken!, _refreshToken ?? "");
-        setToken(_accessToken!);
-      }
+        if (_accessToken != null) {
+          await _storage.saveToken(_accessToken!, _refreshToken ?? "");
+          setToken(_accessToken!);
+        }
 
-      // Save user data
-      if (response.data['user'] != null) {
-        await _storage.saveUser(Map<String, dynamic>.from(response.data['user']));
-        if (response.data['user']['designation'] != null) {
-          await _storage.saveRole(response.data['user']['designation']);
+        // Save complete user data
+        if (response.data['user'] != null) {
+          final userData = Map<String, dynamic>.from(response.data['user']);
+          await _storage.saveUser(userData);
+
+          if (userData['designation'] != null) {
+            await _storage.saveRole(userData['designation'].toString());
+          }
         }
       }
-    }
 
-    return response;
+      return response;
+    } catch (e) {
+      debugPrint('Login error: $e');
+      rethrow;
+    }
   }
 
   /// Save access token for future requests

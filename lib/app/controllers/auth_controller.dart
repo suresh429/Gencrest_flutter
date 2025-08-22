@@ -5,14 +5,60 @@ import '../data/api_service.dart';
 import '../pages/roles/mdo/mdo_home_page.dart';
 import '../pages/roles/rbh/rbh_home_page.dart';
 import '../pages/roles/tsm/tsm_home_page.dart';
+import '../pages/login_page.dart';
+import '../utils/user_local_storage.dart';
 
 class AuthController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final UserLocalStorage _storage = UserLocalStorage();
 
   final passwordVisible = false.obs;
   final isLoading = false.obs;
+  final isLoggedIn = false.obs;
+  final userData = Rxn<Map<String, dynamic>>();
+  final userRole = RxString('');
+
+  @override
+  void onInit() {
+    super.onInit();
+    checkLoginStatus();
+  }
+
+  void checkLoginStatus() {
+    if (_storage.isLoggedIn()) {
+      userData.value = _storage.getUser();
+      userRole.value = _storage.getRole() ?? '';
+      isLoggedIn.value = true;
+      // Auto-navigate based on stored role
+      navigateBasedOnRole(userRole.value);
+    }
+  }
+
+  void navigateBasedOnRole(String designation) {
+    switch (designation.toLowerCase()) {
+      case 'mdo':
+        Get.offAll(() => MDOHomePage());
+        break;
+      case 'tsm':
+        Get.offAll(() => TSMHomePage());
+        break;
+      case 'rbh':
+        Get.offAll(() => RBHHomePage());
+        break;
+      case 'super_admin':
+        Get.offAll(() => MDOHomePage());
+        Get.snackbar(
+          "Welcome Back",
+          "Logged in as Super Admin",
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.black,
+          duration: const Duration(seconds: 2)
+        );
+        break;
+    }
+  }
 
   void togglePasswordVisibility() {
     passwordVisible.value = !passwordVisible.value;
@@ -54,38 +100,57 @@ class AuthController extends GetxController {
       debugPrint("🔑 Login response status: ${response.statusCode}");
       debugPrint("🔑 Login response data: ${response.data}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final user = response.data['user'] ?? {};
-        final designation = (user['designation'] ?? '').toString().toUpperCase();
+        final designation = (user['designation'] ?? '').toString().toLowerCase();
+
+        // Store user data
+        _storage.saveUser(response.data['user']);
+        _storage.saveRole(designation);
 
         usernameController.clear();
         passwordController.clear();
 
+        isLoggedIn.value = true;
+        userData.value = user;
+        userRole.value = designation;
+
         // Navigate based on role
         switch (designation) {
-          case 'MDO':
+          case 'mdo':
             Get.offAll(() => MDOHomePage());
             break;
-          case 'TSM':
+          case 'tsm':
             Get.offAll(() => TSMHomePage());
             break;
-          case 'RBH':
+          case 'rbh':
             Get.offAll(() => RBHHomePage());
             break;
-          case 'SUPER_ADMIN':
-            Get.snackbar("Login Success", "Super Admin logged in",
-                backgroundColor: Colors.green.shade100,
-                colorText: Colors.black);
+          case 'super_admin':
+            Get.offAll(() => MDOHomePage()); // Navigate super admin to MDO page for now
+            Get.snackbar(
+              "Login Success",
+              "Welcome Super Admin",
+              backgroundColor: Colors.green.shade100,
+              colorText: Colors.black,
+              duration: const Duration(seconds: 2)
+            );
             break;
           default:
-            Get.snackbar("Login Failed", "Unexpected role: $designation",
-                backgroundColor: Colors.red.shade100,
-                colorText: Colors.black);
+            Get.snackbar(
+              "Login Failed",
+              "Unexpected role: $designation",
+              backgroundColor: Colors.red.shade100,
+              colorText: Colors.black
+            );
         }
       } else {
-        Get.snackbar("Login Failed", "Invalid username or password",
-            backgroundColor: Colors.red.shade100,
-            colorText: Colors.black);
+        Get.snackbar(
+          "Login Failed",
+          "Invalid username or password",
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.black
+        );
       }
     } catch (e) {
       debugPrint("⚠️ Error during login: $e");
@@ -98,6 +163,14 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> logout() async {
+    await _storage.clearAll();
+    isLoggedIn.value = false;
+    userData.value = null;
+    userRole.value = '';
+    Get.offAll(() => const LoginPage());
   }
 
   @override

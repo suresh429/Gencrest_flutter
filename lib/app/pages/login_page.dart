@@ -72,17 +72,14 @@ class LoginPage extends StatelessWidget {
                   onPressed: controller.isLoading.value
                       ? null
                       : () {
-                   // controller.login(); // <-- call login method
-                    // or navigate after login success
-                     Get.to(() => TSMHomePage());
-                  },
+                          controller.login(); // Enable the login method
+                        },
                   child: controller.isLoading.value
                       ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(color: Colors.white),
-                  )
-                      : const Text("Login"),
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(color: Colors.white))
+                      : const Text('Login'),
                 )),
 
               ],

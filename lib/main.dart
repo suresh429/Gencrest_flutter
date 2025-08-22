@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'app/bindings/initial_binding.dart';
 import 'app/data/api_service.dart';
 import 'app/pages/login_page.dart';
-import 'app/routes/app_pages.dart';
 import 'app/utils/colors.dart';
 import 'app/utils/offline_sync_manager.dart';
 import 'app/utils/user_local_storage.dart';
@@ -15,19 +14,26 @@ import 'app/utils/user_local_storage.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Initialize Hive
+  // Initialize Hive and open all required boxes
   await Hive.initFlutter();
-  await Hive.openBox('offlineBox');
 
-  // ✅ Initialize storage
-  await UserLocalStorage().init();
+  // Open all required boxes first
+  await Future.wait([
+    Hive.openBox('userBox'),
+    Hive.openBox('offlineBox'),
+  ]);
 
-  // ✅ Initialize API service (loads tokens & csrf if any)
+  // Initialize user storage before API service
+  final userStorage = UserLocalStorage();
+  await userStorage.init();
+
+  // Initialize API service after storage is ready
   await ApiService.init();
 
-  // ✅ Initialize offline sync
+  // Initialize offline sync last
   await OfflineSyncManager().init();
 
+  // System UI configuration
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.black,
     statusBarIconBrightness: Brightness.light,
